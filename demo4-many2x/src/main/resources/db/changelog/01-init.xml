@@ -1,0 +1,76 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="01" author="slipchansky">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="customer"/>
+            </not>
+        </preConditions>
+        
+        <createTable tableName="customer">
+            <column name="id" type="BIGSERIAL">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(20)"/>
+            <column name="inn" type="VARCHAR(20)"/>
+        </createTable>
+        
+        <createTable tableName="customer_address">
+            <column name="customer" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_key" type="INTEGER" />
+            <column name="city" type="VARCHAR(20)"/>
+            <column name="address" type="VARCHAR(20)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint constraintName="fk_address_customer"
+        	baseColumnNames="customer" baseTableName="customer_address"  
+            referencedTableName="customer"
+            referencedColumnNames="id"
+            onDelete="CASCADE" 
+            />
+            
+            
+        <createTable tableName="product">
+            <column name="id" type="BIGSERIAL">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(20)"/>
+            <column name="price" type="MONEY"/>
+        </createTable>
+
+        <createTable tableName="order">
+            <column name="id" type="BIGSERIAL">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="customer" type="bigint"/>
+        </createTable>
+        
+        <createTable tableName="order_item">
+            <column name="order" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="INTEGER" />
+        </createTable>
+        
+        <addPrimaryKey tableName="order_item" columnNames="order,product" constraintName="order_product_pk"/>
+
+        <addForeignKeyConstraint constraintName="fk_order_item_product"
+        	baseTableName="order_item" baseColumnNames="product"   
+            referencedTableName="product"
+            referencedColumnNames="id"
+            onDelete="RESTRICT" 
+            />
+
+    </changeSet>
+</databaseChangeLog>

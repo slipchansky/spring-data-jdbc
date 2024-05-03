@@ -1,0 +1,42 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="02" author="slipchansky">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="customer"/>
+            </not>
+        </preConditions>
+        
+        <createTable tableName="customer">
+            <column name="id" type="BIGSERIAL">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(20)"/>
+            <column name="inn" type="VARCHAR(20)"/>
+        </createTable>
+        
+        <createTable tableName="customer_address">
+            <column name="customer" type="BIGINT">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="city" type="VARCHAR(20)"/>
+            <column name="address" type="VARCHAR(20)"/>
+        </createTable>
+        
+        <addForeignKeyConstraint constraintName="fk_address_customer"
+        	baseColumnNames="customer" baseTableName="customer_address"  
+            referencedTableName="customer"
+            referencedColumnNames="id"
+            onDelete="CASCADE" 
+            />
+        
+        
+
+    </changeSet>
+</databaseChangeLog>
